@@ -1,0 +1,38 @@
+{
+  "name": "fastify-base-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --watch ./ --watch .env"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cld": "^2.6.0",
+    "date.js": "^0.3.3",
+    "dotenv-defaults": "^1.1.1",
+    "fastify": "2.11.0",
+    "fastify-auth": "^0.7.2",
+    "fastify-boom": "^0.1.0",
+    "fastify-helmet": "^3.0.2",
+    "fastify-mongoose": "^0.3.0",
+    "fastify-oas": "2.5.0",
+    "fastify-sensible": "^2.1.1",
+    "fastify-swagger": "^2.5.0",
+    "gsheets": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "languagedetect": "^2.0.0",
+    "mongoose": "^5.9.2",
+    "nodemailer": "^6.4.3",
+    "nodemon": "^2.0.2",
+    "redact-pii": "^3.2.3",
+    "sentiment": "^5.0.2",
+    "superagent": "^5.2.2",
+    "tesseract.js": "^2.0.2",
+    "tinyurl": "^1.1.5",
+    "words-to-numbers": "^1.5.1"
+  }
+}
