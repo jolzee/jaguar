@@ -62,7 +62,7 @@ fastify
   .register(require("./routes/indexRoutes"))
   .register(require("./routes/utilsRoutes"), { prefix: "/utils" });
 
-fastify.listen(port, function(err) {
+fastify.listen(port, "0.0.0.0", function(err) {
   if (err) throw err;
   console.log(`server listening on ${fastify.server.address().port}`);
 });
