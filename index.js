@@ -4,7 +4,7 @@ const Boom = require("boom");
 const oas = require("fastify-oas");
 const fastify = require("fastify")();
 const port = process.env.SERVER_PORT || 3000;
-const mongoDB = process.env.MONGODB_URL || "mongodb://localhost:27017/fastify";
+const mongoDB = process.env.MONGO_URL || "mongodb://localhost:27017/fastify";
 
 console.log(`MONGODB_URL = ${mongoDB}`);
 
