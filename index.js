@@ -5,6 +5,8 @@ const oas = require("fastify-oas");
 const fastify = require("fastify")();
 const port = process.env.SERVER_PORT || 3000;
 
+console.log(`MONGODB_URI = ${process.env.MONGODB_URI || "localhost"}`);
+
 fastify
   .register(oas, {
     routePrefix: "/documentation",
@@ -14,7 +16,7 @@ fastify
         description: "Provides a Set of Useful APIs",
         version: "0.1.0"
       },
-      host: `localhost:${port}`,
+      host: `${process.env.HOST_NAME || "localhost"}:${port}`,
       tags: [
         {
           name: "utils",
@@ -44,7 +46,7 @@ fastify
   .register(
     require("fastify-mongoose"),
     {
-      uri: process.env.MONGODB_URI
+      uri: "process.env.MONGODB_URI"
     },
     err => {
       if (err) throw err;
