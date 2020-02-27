@@ -17,7 +17,7 @@ fastify
         description: "Provides a Set of Useful APIs",
         version: "0.1.0"
       },
-      host: `${process.env.HOST_NAME || "localhost"}:${port}`,
+      host: process.env.HOST_NAME || `localhost:${port}`,
       tags: [
         {
           name: "utils",
