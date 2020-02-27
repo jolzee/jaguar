@@ -4,8 +4,9 @@ const Boom = require("boom");
 const oas = require("fastify-oas");
 const fastify = require("fastify")();
 const port = process.env.SERVER_PORT || 3000;
+const mongoDB = process.env.MONGODB_URI || "mongodb://localhost:27017/fastify";
 
-console.log(`MONGODB_URI = ${process.env.MONGODB_URI || "localhost"}`);
+console.log(`MONGODB_URI = ${mongoDB}`);
 
 fastify
   .register(oas, {
@@ -46,7 +47,7 @@ fastify
   .register(
     require("fastify-mongoose"),
     {
-      uri: "process.env.MONGODB_URI"
+      uri: mongoDB
     },
     err => {
       if (err) throw err;
