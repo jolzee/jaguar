@@ -6,8 +6,8 @@ npm install
 
 ## Configuration
 
-* Copy and rename .env.default to .env
-* Add your parameters
+- Copy and rename .env.defaults to .env
+- Add your parameters
 
 ## Create your PEM files
 
@@ -42,9 +42,9 @@ http://localhost:3000/documentation
 
 # Features
 
-* JWT Authentification with PEM file based signature and passphrase
-* Base User Model
-* API Routes for registration and login
-* Example for Authorized and Unauthorized API access
-* Swagger UI
-* Mongoose as ODM
+- JWT Authentification with PEM file based signature and passphrase
+- Base User Model
+- API Routes for registration and login
+- Example for Authorized and Unauthorized API access
+- Swagger UI
+- Mongoose as ODM
