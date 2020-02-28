@@ -18,6 +18,27 @@ const urlShortenerSchema = {
   }
 };
 
+const redactPiiSchema = {
+  schema: {
+    description: "Redacts a fair bit of personal information from text",
+    tags: ["utils"],
+    summary: "Redact personal information",
+    required: ["text"],
+    querystring: {
+      text: { type: "string" }
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          input: { type: "string" },
+          output: { type: "string" }
+        }
+      }
+    }
+  }
+};
+
 const languageDetectSchema = {
   schema: {
     description: "Language Detection",
@@ -133,9 +154,6 @@ const openWeatherSchema = {
           "base",
           "main",
           "visibility",
-          "wind",
-          "rain",
-          "clouds",
           "dt",
           "sys",
           "timezone",
@@ -563,6 +581,7 @@ module.exports = {
   openWeatherSchema,
   wordsToNumbersSchema,
   ocrTesseractSchema,
+  redactPiiSchema,
   sendMailSchema,
   languageDetectSchema
 };

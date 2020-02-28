@@ -55,6 +55,17 @@ module.exports = function(fastify, opts, next) {
       const worker = createWorker();
 
       const lang = request.query.lang;
+
+      //  "afr amh ara asm aze aze_cyrl bel ben bih bod bos bul cat "
+      //  "ceb ces chi_sim chi_tra chr cym cyr_lid dan deu div dzo "
+      //  "ell eng enm epo est eus fas fil fin fra frk frm gle glg "
+      //  "grc guj hat heb hin hrv hun hye iast iku ind isl ita ita_old "
+      //  "jav jav_java jpn kan kat kat_old kaz khm kir kmr kor kur_ara lao lat "
+      //  "lat_lid lav lit mal mar mkd mlt msa mya nep nld nor ori "
+      //  "pan pol por pus ron rus san sin slk slv snd spa spa_old "
+      //  "sqi srp srp_latn swa swe syr tam tel tgk tgl tha tir tur "
+      //  "uig ukr urd uzb uzb_cyrl vie yid gle_uncial "
+
       const imageUrl = request.query.url;
 
       (async () => {
@@ -73,9 +84,12 @@ module.exports = function(fastify, opts, next) {
     }
   );
 
-  fastify.get("/redact-pii", async function(request, reply) {
+  fastify.get("/redact-pii", utilsSchemas.redactPiiSchema, async function(
+    request,
+    reply
+  ) {
     const inputText = request.query.text;
-    const redactedText = redactor.redact(request.query.text);
+    const redactedText = redactor.redact(inputText);
     reply.send({
       input: inputText,
       output: redactedText

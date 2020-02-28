@@ -5,6 +5,7 @@ const oas = require("fastify-oas");
 const fastify = require("fastify")();
 const port = process.env.PORT || 3000;
 const mongoDB = process.env.MONGO_URL || "mongodb://localhost:27017/fastify";
+const host = process.env.HOST_NAME || "localhost";
 
 console.log(`MONGODB_URL = ${mongoDB}`);
 
@@ -17,7 +18,7 @@ fastify
         description: "Provides a Set of Useful APIs",
         version: "0.1.0"
       },
-      host: process.env.HOST_NAME || `localhost:${port}`,
+      host: host.startsWith("localhost") ? `localhost:${port}` : host,
       tags: [
         {
           name: "utils",
