@@ -34,6 +34,7 @@
     "superagent": "^5.2.2",
     "tesseract.js": "^2.0.2",
     "tinyurl": "^1.1.5",
+    "twilio": "^3.39.5",
     "words-to-numbers": "^1.5.1"
   }
 }

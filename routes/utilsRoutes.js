@@ -84,6 +84,28 @@ module.exports = function(fastify, opts, next) {
     }
   );
 
+  fastify.post("/send-sms", utilsSchemas.sendSmsTwilio, async function(
+    request,
+    reply
+  ) {
+    const body = request.body.message;
+    const from = process.env.TWILIO_FROM_PHONE;
+    const to = request.body.to;
+
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const client = require("twilio")(accountSid, authToken);
+
+    client.messages.create({ body: body, from: from, to: to }).then(message => {
+      reply.send({
+        message: message.body,
+        from: message.from,
+        to: message.to,
+        status: message.status
+      });
+    });
+  });
+
   fastify.get("/redact-pii", utilsSchemas.redactPiiSchema, async function(
     request,
     reply

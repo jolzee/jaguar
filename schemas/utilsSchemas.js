@@ -20,8 +20,7 @@ const urlShortenerSchema = {
 
 const redactPiiSchema = {
   schema: {
-    description:
-      `Redacts a fair bit of personal information from US English text.
+    description: `Redacts a fair bit of personal information from US English text.
 
     Things like credentials, creditCardNumber, emailAddress, ipAddress, name, password, phoneNumber, streetAddress, username, usSocialSecurityNumber, zipcode, url and digits should be covered`,
     tags: ["utils"],
@@ -565,6 +564,35 @@ const ocrTesseractSchema = {
   }
 };
 
+const sendSmsTwilio = {
+  schema: {
+    description:
+      "Send a sms using Twilio - from phone number: " +
+      process.env.TWILIO_FROM_PHONE,
+    tags: ["utils", "sms"],
+    summary: "Send a sms with Twilio",
+    body: {
+      type: "object",
+      required: ["to", "message"],
+      properties: {
+        to: { type: "string", description: "In a format like +15554659840" },
+        message: { type: "string" }
+      }
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          status: { type: "string" },
+          from: { type: "string" },
+          to: { type: "string" },
+          message: { type: "string" }
+        }
+      }
+    }
+  }
+};
+
 const sendMailSchema = {
   schema: {
     description: "Send an email from teneotest8@gmail.com",
@@ -583,12 +611,13 @@ const sendMailSchema = {
 };
 
 module.exports = {
-  urlShortenerSchema,
   gsheetSchema,
-  openWeatherSchema,
-  wordsToNumbersSchema,
+  languageDetectSchema,
   ocrTesseractSchema,
+  openWeatherSchema,
   redactPiiSchema,
   sendMailSchema,
-  languageDetectSchema
+  sendSmsTwilio,
+  urlShortenerSchema,
+  wordsToNumbersSchema
 };
