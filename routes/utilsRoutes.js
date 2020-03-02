@@ -199,10 +199,10 @@ module.exports = function(fastify, opts, next) {
 
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
-          reply.send(error);
+          reply.send({ status: "error" });
         } else {
           console.log("Email sent: " + info.response);
-          reply.send("ok");
+          reply.send({ status: "sent" });
         }
       });
     }
