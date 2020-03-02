@@ -76,7 +76,6 @@ module.exports = function(fastify, opts, next) {
           data: { text }
         } = await worker.recognize(imageUrl);
         let responseObj = extractAllData(text);
-        console.log(responseObj);
         responseObj.imgUrl = imageUrl;
         reply.send(responseObj);
         await worker.terminate();

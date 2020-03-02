@@ -484,7 +484,7 @@ const ocrTesseractSchema = {
       200: {
         type: "object",
         properties: {
-          imageUrl: { type: "string" },
+          imgUrl: { type: "string" },
           text: { type: "string" },
           emailAddresses: {
             type: "array",

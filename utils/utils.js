@@ -87,7 +87,7 @@ const textToNumbers = function(text) {
 
 const extractAllData = function(text) {
   const currencies = findCurrencies(text);
-  const extractionObj = {
+  let extractionObj = {
     text: text,
     emailAddresses: findAllEmails(text),
     datesDayMonthYear: findDatesDayMonthYear(text),
