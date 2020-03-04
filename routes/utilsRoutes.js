@@ -1,6 +1,7 @@
 const superagent = require("superagent");
 const { createWorker } = require("tesseract.js");
 const nodemailer = require("nodemailer");
+const translate = require("@vitalets/google-translate-api");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
 const { SyncRedactor } = require("redact-pii");
 const redactor = new SyncRedactor({
@@ -116,6 +117,28 @@ module.exports = function(fastify, opts, next) {
       output: redactedText
     });
   });
+
+  fastify.get(
+    "/translate/google",
+    utilsSchemas.translateGoogleSchema,
+    async function(request, reply) {
+      const inputText = request.query.text;
+      const toLang = request.query.to || "en";
+
+      translate(inputText, { to: toLang })
+        .then(res => {
+          reply.send({
+            input: inputText,
+            toLang: toLang,
+            output: res.text,
+            sourceLang: res.from.language.iso
+          });
+        })
+        .catch(err => {
+          reply.send(err);
+        });
+    }
+  );
 
   fastify.get("/lang-detect", utilsSchemas.languageDetectSchema, async function(
     request,

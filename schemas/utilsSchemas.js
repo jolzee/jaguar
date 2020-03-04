@@ -41,6 +41,34 @@ const redactPiiSchema = {
   }
 };
 
+const translateGoogleSchema = {
+  schema: {
+    description: `Translate text using Google translate.`,
+    tags: ["utils", "translation"],
+    summary: "Translation using Google Translate",
+    required: ["text"],
+    querystring: {
+      text: { type: "string", description: "Source text to be translated" },
+      to: {
+        type: "string",
+        description:
+          "Target language code to translate to. If omitted defaults to 'en'. Others found here https://developers.google.com/admin-sdk/directory/v1/languages"
+      }
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          input: { type: "string" },
+          toLang: { type: "string" },
+          output: { type: "string" },
+          sourceLang: { type: "string" }
+        }
+      }
+    }
+  }
+};
+
 const languageDetectSchema = {
   schema: {
     description: "Language Detection",
@@ -619,5 +647,6 @@ module.exports = {
   sendMailSchema,
   sendSmsTwilio,
   urlShortenerSchema,
-  wordsToNumbersSchema
+  wordsToNumbersSchema,
+  translateGoogleSchema
 };
