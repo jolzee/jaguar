@@ -5,17 +5,17 @@ const urlShortenerSchema = {
     summary: "URL Shortener",
     required: ["url"],
     querystring: {
-      url: { type: "string" }
+      url: { type: "string" },
     },
     response: {
       200: {
         type: "object",
         properties: {
-          url: { type: "string" }
-        }
-      }
-    }
-  }
+          url: { type: "string" },
+        },
+      },
+    },
+  },
 };
 
 const redactPiiSchema = {
@@ -27,18 +27,18 @@ const redactPiiSchema = {
     summary: "Redact personal information",
     required: ["text"],
     querystring: {
-      text: { type: "string" }
+      text: { type: "string" },
     },
     response: {
       200: {
         type: "object",
         properties: {
           input: { type: "string" },
-          output: { type: "string" }
-        }
-      }
-    }
-  }
+          output: { type: "string" },
+        },
+      },
+    },
+  },
 };
 
 const translateGoogleSchema = {
@@ -52,8 +52,8 @@ const translateGoogleSchema = {
       to: {
         type: "string",
         description:
-          "Target language code to translate to. If omitted defaults to 'en'. Others found here https://developers.google.com/admin-sdk/directory/v1/languages"
-      }
+          "Target language code to translate to. If omitted defaults to 'en'. Others found here https://developers.google.com/admin-sdk/directory/v1/languages",
+      },
     },
     response: {
       200: {
@@ -62,11 +62,11 @@ const translateGoogleSchema = {
           input: { type: "string" },
           toLang: { type: "string" },
           output: { type: "string" },
-          sourceLang: { type: "string" }
-        }
-      }
-    }
-  }
+          sourceLang: { type: "string" },
+        },
+      },
+    },
+  },
 };
 
 const languageDetectSchema = {
@@ -77,8 +77,8 @@ const languageDetectSchema = {
     querystring: {
       text: {
         description: "The text you would like to analyze",
-        type: "string"
-      }
+        type: "string",
+      },
     },
     required: ["text"],
     response: {
@@ -88,23 +88,23 @@ const languageDetectSchema = {
           type: "object",
           properties: {
             name: {
-              type: "string"
+              type: "string",
             },
             code: {
-              type: "string"
+              type: "string",
             },
             percent: {
-              type: "integer"
+              type: "integer",
             },
             score: {
-              type: "integer"
-            }
+              type: "integer",
+            },
           },
-          required: ["name", "code", "percent", "score"]
-        }
-      }
-    }
-  }
+          required: ["name", "code", "percent", "score"],
+        },
+      },
+    },
+  },
 };
 
 const gsheetSchema = {
@@ -114,7 +114,7 @@ const gsheetSchema = {
     summary: "GSheet as JSON",
     querystring: {
       spreadsheetKey: { type: "string" },
-      worksheetTitle: { type: "string" }
+      worksheetTitle: { type: "string" },
     },
     response: {
       200: {
@@ -129,24 +129,24 @@ const gsheetSchema = {
               properties: {
                 col1: {
                   type: "string",
-                  description: "Value in respective column for row"
+                  description: "Value in respective column for row",
                 },
                 col2: {
                   type: "string",
-                  description: "Value in respective column for row"
-                }
+                  description: "Value in respective column for row",
+                },
               },
               additionalProperties: true,
-              required: []
+              required: [],
             },
             additionalProperties: true,
-            required: []
-          }
+            required: [],
+          },
         },
-        required: ["updated", "title"]
-      }
-    }
-  }
+        required: ["updated", "title"],
+      },
+    },
+  },
 };
 
 const openWeatherSchema = {
@@ -158,18 +158,18 @@ const openWeatherSchema = {
     querystring: {
       city: {
         description: "For example London, UK or Chicago",
-        type: "string"
+        type: "string",
       },
       lang: {
         description:
           "You can use lang parameter to get output in your language. The following language values are supported: English - en, Russian - ru, Italian - it, Spanish - sp, Ukrainian - ua, German - de, Portuguese - pt, Romanian - ro, Polish - pl, Finnish - fi, Dutch - nl, French - fr, Bulgarian - bg, Swedish - se, Chinese Traditional - zh_tw, Chinese Simplified - zh_cn, Turkish - tr",
-        type: "string"
+        type: "string",
       },
       units: {
         description:
           "You can use different types of metric systems by units = metric or imperial",
-        type: "string"
-      }
+        type: "string",
+      },
     },
     response: {
       200: {
@@ -189,7 +189,7 @@ const openWeatherSchema = {
           "timezone",
           "id",
           "name",
-          "cod"
+          "cod",
         ],
         properties: {
           coord: {
@@ -203,16 +203,16 @@ const openWeatherSchema = {
                 type: "number",
                 title: "The Lon Schema",
                 default: 0.0,
-                examples: [-122.33]
+                examples: [-122.33],
               },
               lat: {
                 $id: "#/properties/coord/properties/lat",
                 type: "number",
                 title: "The Lat Schema",
                 default: 0.0,
-                examples: [47.61]
-              }
-            }
+                examples: [47.61],
+              },
+            },
           },
           weather: {
             $id: "#/properties/weather",
@@ -229,7 +229,7 @@ const openWeatherSchema = {
                   type: "integer",
                   title: "The Id Schema",
                   default: 0,
-                  examples: [500]
+                  examples: [500],
                 },
                 main: {
                   $id: "#/properties/weather/items/properties/main",
@@ -237,7 +237,7 @@ const openWeatherSchema = {
                   title: "The Main Schema",
                   default: "",
                   examples: ["Rain"],
-                  pattern: "^(.*)$"
+                  pattern: "^(.*)$",
                 },
                 description: {
                   $id: "#/properties/weather/items/properties/description",
@@ -245,7 +245,7 @@ const openWeatherSchema = {
                   title: "The Description Schema",
                   default: "",
                   examples: ["light rain"],
-                  pattern: "^(.*)$"
+                  pattern: "^(.*)$",
                 },
                 icon: {
                   $id: "#/properties/weather/items/properties/icon",
@@ -253,10 +253,10 @@ const openWeatherSchema = {
                   title: "The Icon Schema",
                   default: "",
                   examples: ["10n"],
-                  pattern: "^(.*)$"
-                }
-              }
-            }
+                  pattern: "^(.*)$",
+                },
+              },
+            },
           },
           base: {
             $id: "#/properties/base",
@@ -264,7 +264,7 @@ const openWeatherSchema = {
             title: "The Base Schema",
             default: "",
             examples: ["stations"],
-            pattern: "^(.*)$"
+            pattern: "^(.*)$",
           },
           main: {
             $id: "#/properties/main",
@@ -276,7 +276,7 @@ const openWeatherSchema = {
               "temp_min",
               "temp_max",
               "pressure",
-              "humidity"
+              "humidity",
             ],
             properties: {
               temp: {
@@ -284,51 +284,51 @@ const openWeatherSchema = {
                 type: "number",
                 title: "The Temp Schema",
                 default: 0.0,
-                examples: [6.12]
+                examples: [6.12],
               },
               feels_like: {
                 $id: "#/properties/main/properties/feels_like",
                 type: "number",
                 title: "The Feels_like Schema",
                 default: 0.0,
-                examples: [2.14]
+                examples: [2.14],
               },
               temp_min: {
                 $id: "#/properties/main/properties/temp_min",
                 type: "number",
                 title: "The Temp_min Schema",
                 default: 0.0,
-                examples: [3.89]
+                examples: [3.89],
               },
               temp_max: {
                 $id: "#/properties/main/properties/temp_max",
                 type: "integer",
                 title: "The Temp_max Schema",
                 default: 0,
-                examples: [9]
+                examples: [9],
               },
               pressure: {
                 $id: "#/properties/main/properties/pressure",
                 type: "integer",
                 title: "The Pressure Schema",
                 default: 0,
-                examples: [1009]
+                examples: [1009],
               },
               humidity: {
                 $id: "#/properties/main/properties/humidity",
                 type: "integer",
                 title: "The Humidity Schema",
                 default: 0,
-                examples: [93]
-              }
-            }
+                examples: [93],
+              },
+            },
           },
           visibility: {
             $id: "#/properties/visibility",
             type: "integer",
             title: "The Visibility Schema",
             default: 0,
-            examples: [9656]
+            examples: [9656],
           },
           wind: {
             $id: "#/properties/wind",
@@ -341,23 +341,23 @@ const openWeatherSchema = {
                 type: "number",
                 title: "The Speed Schema",
                 default: 0.0,
-                examples: [4.1]
+                examples: [4.1],
               },
               deg: {
                 $id: "#/properties/wind/properties/deg",
                 type: "integer",
                 title: "The Deg Schema",
                 default: 0,
-                examples: [180]
+                examples: [180],
               },
               gust: {
                 $id: "#/properties/wind/properties/gust",
                 type: "number",
                 title: "The Gust Schema",
                 default: 0.0,
-                examples: [7.7]
-              }
-            }
+                examples: [7.7],
+              },
+            },
           },
           rain: {
             $id: "#/properties/rain",
@@ -370,9 +370,9 @@ const openWeatherSchema = {
                 type: "number",
                 title: "The 1h Schema",
                 default: 0.0,
-                examples: [0.57]
-              }
-            }
+                examples: [0.57],
+              },
+            },
           },
           clouds: {
             $id: "#/properties/clouds",
@@ -385,16 +385,16 @@ const openWeatherSchema = {
                 type: "integer",
                 title: "The All Schema",
                 default: 0,
-                examples: [90]
-              }
-            }
+                examples: [90],
+              },
+            },
           },
           dt: {
             $id: "#/properties/dt",
             type: "integer",
             title: "The Dt Schema",
             default: 0,
-            examples: [1582464839]
+            examples: [1582464839],
           },
           sys: {
             $id: "#/properties/sys",
@@ -407,14 +407,14 @@ const openWeatherSchema = {
                 type: "integer",
                 title: "The Type Schema",
                 default: 0,
-                examples: [1]
+                examples: [1],
               },
               id: {
                 $id: "#/properties/sys/properties/id",
                 type: "integer",
                 title: "The Id Schema",
                 default: 0,
-                examples: [5451]
+                examples: [5451],
               },
               country: {
                 $id: "#/properties/sys/properties/country",
@@ -422,37 +422,37 @@ const openWeatherSchema = {
                 title: "The Country Schema",
                 default: "",
                 examples: ["US"],
-                pattern: "^(.*)$"
+                pattern: "^(.*)$",
               },
               sunrise: {
                 $id: "#/properties/sys/properties/sunrise",
                 type: "integer",
                 title: "The Sunrise Schema",
                 default: 0,
-                examples: [1582470114]
+                examples: [1582470114],
               },
               sunset: {
                 $id: "#/properties/sys/properties/sunset",
                 type: "integer",
                 title: "The Sunset Schema",
                 default: 0,
-                examples: [1582508633]
-              }
-            }
+                examples: [1582508633],
+              },
+            },
           },
           timezone: {
             $id: "#/properties/timezone",
             type: "integer",
             title: "The Timezone Schema",
             default: 0,
-            examples: [-28800]
+            examples: [-28800],
           },
           id: {
             $id: "#/properties/id",
             type: "integer",
             title: "The Id Schema",
             default: 0,
-            examples: [5809844]
+            examples: [5809844],
           },
           name: {
             $id: "#/properties/name",
@@ -460,19 +460,19 @@ const openWeatherSchema = {
             title: "The Name Schema",
             default: "",
             examples: ["Seattle"],
-            pattern: "^(.*)$"
+            pattern: "^(.*)$",
           },
           cod: {
             $id: "#/properties/cod",
             type: "integer",
             title: "The Cod Schema",
             default: 0,
-            examples: [200]
-          }
-        }
-      }
-    }
-  }
+            examples: [200],
+          },
+        },
+      },
+    },
+  },
 };
 
 const wordsToNumbersSchema = {
@@ -481,18 +481,18 @@ const wordsToNumbersSchema = {
     tags: ["utils"],
     summary: "Words to Numbers",
     querystring: {
-      text: { type: "string" }
+      text: { type: "string" },
     },
     response: {
       200: {
         type: "object",
         properties: {
           input: { type: "string" },
-          output: { type: "string" }
-        }
-      }
-    }
-  }
+          output: { type: "string" },
+        },
+      },
+    },
+  },
 };
 
 const ocrTesseractSchema = {
@@ -505,8 +505,8 @@ const ocrTesseractSchema = {
       lang: {
         type: "string",
         description:
-          "afr amh ara asm aze aze_cyrl bel ben bih bod bos bul cat ceb ces chi_sim chi_tra chr cym cyr_lid dan deu div dzo ell eng enm epo est eus fas fil fin fra frk frm gle glg grc guj hat heb hin hrv hun hye iast iku ind isl ita ita_old jav jav_java jpn kan kat kat_old kaz khm kir kmr kor kur_ara lao lat lat_lid lav lit mal mar mkd mlt msa mya nep nld nor ori pan pol por pus ron rus san sin slk slv snd spa spa_old sqi srp srp_latn swa swe syr tam tel tgk tgl tha tir tur uig ukr urd uzb uzb_cyrl vie yid gle_uncial"
-      }
+          "afr amh ara asm aze aze_cyrl bel ben bih bod bos bul cat ceb ces chi_sim chi_tra chr cym cyr_lid dan deu div dzo ell eng enm epo est eus fas fil fin fra frk frm gle glg grc guj hat heb hin hrv hun hye iast iku ind isl ita ita_old jav jav_java jpn kan kat kat_old kaz khm kir kmr kor kur_ara lao lat lat_lid lav lit mal mar mkd mlt msa mya nep nld nor ori pan pol por pus ron rus san sin slk slv snd spa spa_old sqi srp srp_latn swa swe syr tam tel tgk tgl tha tir tur uig ukr urd uzb uzb_cyrl vie yid gle_uncial",
+      },
     },
     response: {
       200: {
@@ -517,26 +517,26 @@ const ocrTesseractSchema = {
           emailAddresses: {
             type: "array",
             items: {
-              type: "number"
-            }
+              type: "number",
+            },
           },
           datesDayMonthYear: {
             type: "array",
             items: {
-              type: "string"
-            }
+              type: "string",
+            },
           },
           datesMonthDayYear: {
             type: "array",
             items: {
-              type: "string"
-            }
+              type: "string",
+            },
           },
           currencies: {
             type: "array",
             items: {
-              type: "number"
-            }
+              type: "number",
+            },
           },
           maxCurrency: { type: "number" },
           creditCardNumbers: {
@@ -545,51 +545,51 @@ const ocrTesseractSchema = {
               all: {
                 type: "array",
                 items: {
-                  type: "string"
-                }
+                  type: "string",
+                },
               },
               visa: {
                 type: "array",
                 items: {
-                  type: "string"
-                }
+                  type: "string",
+                },
               },
               masterCard: {
                 type: "array",
                 items: {
-                  type: "string"
-                }
+                  type: "string",
+                },
               },
               amex: {
                 type: "array",
                 items: {
-                  type: "string"
-                }
+                  type: "string",
+                },
               },
               discovery: {
                 type: "array",
                 items: {
-                  type: "string"
-                }
-              }
-            }
+                  type: "string",
+                },
+              },
+            },
           },
           usZipCodes: {
             type: "array",
             items: {
-              type: "string"
-            }
+              type: "string",
+            },
           },
           ukPostCodes: {
             type: "array",
             items: {
-              type: "string"
-            }
-          }
-        }
-      }
-    }
-  }
+              type: "string",
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 const sendSmsTwilio = {
@@ -604,8 +604,8 @@ const sendSmsTwilio = {
       required: ["to", "message"],
       properties: {
         to: { type: "string", description: "In a format like +15554659840" },
-        message: { type: "string" }
-      }
+        message: { type: "string" },
+      },
     },
     response: {
       200: {
@@ -614,11 +614,11 @@ const sendSmsTwilio = {
           status: { type: "string" },
           from: { type: "string" },
           to: { type: "string" },
-          message: { type: "string" }
-        }
-      }
-    }
-  }
+          message: { type: "string" },
+        },
+      },
+    },
+  },
 };
 
 const sendMailSchema = {
@@ -632,10 +632,48 @@ const sendMailSchema = {
       properties: {
         to: { type: "string" },
         subject: { type: "string" },
-        text: { type: "string" }
-      }
-    }
-  }
+        text: { type: "string" },
+      },
+    },
+  },
+};
+
+const sendSesMailSchema = {
+  schema: {
+    description: "Send emails through AWS SES",
+    tags: ["utils", "email", "aws"],
+    summary: "Send Email through AWS SES",
+    body: {
+      type: "object",
+      required: ["from", "to", "subject", "text"],
+      properties: {
+        from: { type: "string" },
+        to: { type: "string" },
+        cc: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+        bcc: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+        subject: { type: "string" },
+        text: { type: "string" },
+        awsSesAccessKey: {
+          type: "string",
+          description: "Optional - If specified overrides env variable config",
+        },
+        awsSesSecret: {
+          type: "string",
+          description: "Optional - If specified overrides env variable config",
+        },
+      },
+    },
+  },
 };
 
 module.exports = {
@@ -645,8 +683,9 @@ module.exports = {
   openWeatherSchema,
   redactPiiSchema,
   sendMailSchema,
+  sendSesMailSchema,
   sendSmsTwilio,
   urlShortenerSchema,
   wordsToNumbersSchema,
-  translateGoogleSchema
+  translateGoogleSchema,
 };

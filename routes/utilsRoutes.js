@@ -3,16 +3,18 @@ const { createWorker } = require("tesseract.js");
 const nodemailer = require("nodemailer");
 const translate = require("@vitalets/google-translate-api");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
+// const pollyMp3 = require("../utils/mp3-polly");
+const parseString = require("xml2js").parseString;
 const { SyncRedactor } = require("redact-pii");
 const redactor = new SyncRedactor({
   customRedactors: {
     before: [
       {
         regexpPattern: /\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\b/gi,
-        replaceWith: "UK_POST_CODE"
-      }
-    ]
-  }
+        replaceWith: "UK_POST_CODE",
+      },
+    ],
+  },
 });
 const langDetect = require("cld");
 const utilsSchemas = require("../schemas/utilsSchemas");
@@ -20,11 +22,13 @@ const utilsSchemas = require("../schemas/utilsSchemas");
 require("isomorphic-fetch");
 const gsheets = require("gsheets");
 
-module.exports = function(fastify, opts, next) {
+var ses = require("node-ses");
+
+module.exports = function (fastify, opts, next) {
   fastify.get(
     "/weather/open-weather",
     utilsSchemas.openWeatherSchema,
-    async function(request, reply) {
+    async function (request, reply) {
       const city = request.query.city;
       const lang = request.query.lang;
       const units = request.query.units;
@@ -36,13 +40,13 @@ module.exports = function(fastify, opts, next) {
         .query({
           q: city,
           lang: lang,
-          units: units
+          units: units,
         })
-        .then(res => {
+        .then((res) => {
           console.log(res);
           reply.send(res.body);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           reply.send(err);
         });
@@ -74,7 +78,7 @@ module.exports = function(fastify, opts, next) {
         await worker.loadLanguage(lang);
         await worker.initialize(lang);
         const {
-          data: { text }
+          data: { text },
         } = await worker.recognize(imageUrl);
         let responseObj = extractAllData(text);
         responseObj.imgUrl = imageUrl;
@@ -84,7 +88,7 @@ module.exports = function(fastify, opts, next) {
     }
   );
 
-  fastify.post("/send-sms", utilsSchemas.sendSmsTwilio, async function(
+  fastify.post("/send-sms", utilsSchemas.sendSmsTwilio, async function (
     request,
     reply
   ) {
@@ -96,17 +100,19 @@ module.exports = function(fastify, opts, next) {
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const client = require("twilio")(accountSid, authToken);
 
-    client.messages.create({ body: body, from: from, to: to }).then(message => {
-      reply.send({
-        message: message.body,
-        from: message.from,
-        to: message.to,
-        status: message.status
+    client.messages
+      .create({ body: body, from: from, to: to })
+      .then((message) => {
+        reply.send({
+          message: message.body,
+          from: message.from,
+          to: message.to,
+          status: message.status,
+        });
       });
-    });
   });
 
-  fastify.get("/redact-pii", utilsSchemas.redactPiiSchema, async function(
+  fastify.get("/redact-pii", utilsSchemas.redactPiiSchema, async function (
     request,
     reply
   ) {
@@ -114,44 +120,55 @@ module.exports = function(fastify, opts, next) {
     const redactedText = redactor.redact(inputText);
     reply.send({
       input: inputText,
-      output: redactedText
+      output: redactedText,
     });
   });
+
+  // fastify.get("/asr/polly", null, async function (request, reply) {
+  //   const text =
+  //     request.query.text || "Good day to you. Thanks for trying Polly.";
+  //   const type = request.query.type || "text"; // ssml
+  //   const voice = request.query.voice || "Marlene";
+  //   pollyMp3(text, voice, type, function (audioStream) {
+  //     reply.type("audio/mpeg").send(audioStream);
+  //   });
+  // });
 
   fastify.get(
     "/translate/google",
     utilsSchemas.translateGoogleSchema,
-    async function(request, reply) {
+    async function (request, reply) {
       const inputText = request.query.text;
       const toLang = request.query.to || "en";
 
       translate(inputText, { to: toLang })
-        .then(res => {
+        .then((res) => {
           reply.send({
             input: inputText,
             toLang: toLang,
             output: res.text,
-            sourceLang: res.from.language.iso
+            sourceLang: res.from.language.iso,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           reply.send(err);
         });
     }
   );
 
-  fastify.get("/lang-detect", utilsSchemas.languageDetectSchema, async function(
-    request,
-    reply
-  ) {
-    langDetect.detect(request.query.text, function(err, result) {
-      if (err) {
-        reply.send(err);
-      } else {
-        reply.send(result.languages);
-      }
-    });
-  });
+  fastify.get(
+    "/lang-detect",
+    utilsSchemas.languageDetectSchema,
+    async function (request, reply) {
+      langDetect.detect(request.query.text, function (err, result) {
+        if (err) {
+          reply.send(err);
+        } else {
+          reply.send(result.languages);
+        }
+      });
+    }
+  );
 
   fastify.get(
     "/url/shorten",
@@ -160,10 +177,10 @@ module.exports = function(fastify, opts, next) {
       superagent
         .get("http://tinyurl.com/api-create.php")
         .query({ url: request.query.url })
-        .then(res => {
+        .then((res) => {
           reply.send({ url: res.text });
         })
-        .catch(err => {
+        .catch((err) => {
           reply.send(err);
         });
     }
@@ -172,7 +189,7 @@ module.exports = function(fastify, opts, next) {
   fastify.get(
     "/words-to-numbers",
     utilsSchemas.wordsToNumbersSchema,
-    async function(request, reply) {
+    async function (request, reply) {
       const text = request.query.text;
       console.log(text);
       const newText = wordsToNumbers(text);
@@ -180,12 +197,12 @@ module.exports = function(fastify, opts, next) {
       console.log(newText);
       reply.send({
         input: text,
-        output: newText
+        output: newText,
       });
     }
   );
 
-  fastify.get("/gsheet", utilsSchemas.gsheetSchema, async function(
+  fastify.get("/gsheet", utilsSchemas.gsheetSchema, async function (
     request,
     reply
   ) {
@@ -195,8 +212,8 @@ module.exports = function(fastify, opts, next) {
     // gsheets.getSpreadsheet(googleSheetKey).then(res => console.log(res));
 
     gsheets.getWorksheet(googleSheetKey, worksheetTitle).then(
-      res => reply.send(res),
-      err => reply.send(err)
+      (res) => reply.send(res),
+      (err) => reply.send(err)
     );
   });
 
@@ -208,23 +225,89 @@ module.exports = function(fastify, opts, next) {
         service: "gmail",
         auth: {
           user: process.env.GMAIL_EMAIL,
-          pass: process.env.GMAIL_PASS
-        }
+          pass: process.env.GMAIL_PASS,
+        },
       });
 
       const mailOptions = {
         from: "teneotest8@gmail.com",
         to: request.body.to,
         subject: request.body.subject,
-        text: request.body.text
+        text: request.body.text,
       };
 
-      transporter.sendMail(mailOptions, function(error, info) {
+      transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           reply.send({ status: "error" });
         } else {
           console.log("Email sent: " + info.response);
           reply.send({ status: "sent" });
+        }
+      });
+    }
+  );
+
+  fastify.post(
+    "/send-aws-ses-email",
+    utilsSchemas.sendSesMailSchema,
+    async (request, reply) => {
+      let awsSesClient = null;
+
+      if (request.body.awsSesAccessKey && request.body.awsSesSecret) {
+        awsSesClient = ses.createClient({
+          key: request.body.awsSesAccessKey,
+          secret: request.body.awsSesSecret,
+        });
+      } else if (process.env.AWS_SES_ACCESS_KEY && process.env.AWS_SES_SECRET) {
+        awsSesClient = ses.createClient({
+          key: process.env.AWS_SES_ACCESS_KEY,
+          secret: process.env.AWS_SES_SECRET,
+        });
+      }
+
+      if (!awsSesClient) {
+        reply.send({
+          status: "No AWS SES Configuration Found",
+        });
+        return;
+      }
+      // `from` - email address from which to send (required)
+      // `subject` - string (required). Must be encoded as UTF-8
+      // `message` - can be html (required). Must be encoded as UTF-8.
+      // `altText` - plain text version of message. Must be encoded as UTF-8.
+      // `to` - email address or array of addresses
+      // `cc` - email address or array of addresses
+      // `bcc` - email address or array of addresses
+      // `replyTo` - email address
+      // `configurationSet` - SES configuration set name
+      // `messageTags` - SES message tags: array of name/value objects, e.g. { name: xid, value: 1 }
+      const emailConfig = {
+        to: request.body.to,
+        from: request.body.from,
+        cc: request.body.cc ? request.body.cc : [],
+        bcc: request.body.bcc ? request.body.bcc : [],
+        subject: request.body.subject,
+        message: request.body.text,
+      };
+
+      awsSesClient.sendEmail(emailConfig, function (error, data, res) {
+        if (error) {
+          reply.send({ status: "error" });
+        } else {
+          console.log(`Email sent to: ${emailConfig.to}`);
+          parseString(data, function (err, result) {
+            if (err) {
+              reply.send({
+                status: "sent",
+              });
+            } else {
+              console.log("Email sent: " + result);
+              reply.send({
+                status: "sent",
+                sesData: result,
+              });
+            }
+          });
         }
       });
     }
