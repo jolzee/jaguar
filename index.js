@@ -35,7 +35,7 @@ fastify
     exposeRoute: true,
   })
   .register(require("fastify-cors"), {
-    origin: ["*"],
+    RegExp: ["*"],
     methods: ["GET", "POST"],
   })
   .register(require("fastify-helmet"))
