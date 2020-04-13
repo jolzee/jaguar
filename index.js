@@ -2,7 +2,7 @@ require("dotenv-defaults").config();
 
 const Boom = require("boom");
 const oas = require("fastify-oas");
-const fastify = require("fastify")();
+const fastify = require("fastify")({ trustProxy: true });
 const port = process.env.PORT || 3000;
 const host = process.env.HOST_NAME || "localhost";
 
