@@ -621,6 +621,14 @@ const sendSmsTwilio = {
   },
 };
 
+const ipSchema = {
+  schema: {
+    description: "Determine your current ip address",
+    tags: ["ip"],
+    summary: "Get your external ip",
+  },
+};
+
 const sendMailSchema = {
   schema: {
     description: "Send an email from teneotest8@gmail.com",
@@ -688,4 +696,5 @@ module.exports = {
   urlShortenerSchema,
   wordsToNumbersSchema,
   translateGoogleSchema,
+  ipSchema,
 };
