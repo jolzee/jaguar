@@ -34,6 +34,10 @@ fastify
     },
     exposeRoute: true,
   })
+  .register(require("fastify-cors"), {
+    origin: ["*"],
+    methods: ["GET", "POST"],
+  })
   .register(require("fastify-helmet"))
   .register(require("fastify-boom"))
   .register(require("fastify-sensible"))

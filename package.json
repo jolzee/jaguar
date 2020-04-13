@@ -1,5 +1,5 @@
 {
-  "name": "fastify-base-project",
+  "name": "jaguar",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,6 +20,7 @@
     "fastify": "2.12.1",
     "fastify-auth": "^0.7.2",
     "fastify-boom": "^0.1.0",
+    "fastify-cors": "^3.0.3",
     "fastify-helmet": "^3.0.2",
     "fastify-oas": "2.5.2",
     "fastify-sensible": "^2.1.1",

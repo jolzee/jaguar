@@ -205,11 +205,41 @@ module.exports = function (fastify, opts, next) {
   //var ip = req.connection.remoteAddress
   fastify.get("/ip", utilsSchemas.ipSchema, async function (request, reply) {
     try {
-      console.log(request.ips);
       reply.send(request.ips);
     } catch (e) {
       reply.send(e.message);
     }
+  });
+
+  fastify.get("/geo", async function (request, reply) {
+    const ipAddress = request.query.ip;
+    let locationInfo = {};
+    superagent
+      .get(`http://www.geoplugin.net/json.gp?ip=${ipAddress}`)
+      .accept("application/json")
+      .then((res) => {
+        const loc = JSON.parse(res.text);
+        // logger.debug(`📍 Obtained New Location Information`, loc);
+        locationInfo = {
+          ip: ipAddress,
+          city: loc.geoplugin_city,
+          continentCode: loc.geoplugin_continentCode,
+          continentName: loc.geoplugin_continentName,
+          countryCode: loc.geoplugin_countryCode,
+          countryName: loc.geoplugin_countryName,
+          currencySymbol: loc.geoplugin_currencySymbol,
+          currencyCode: loc.geoplugin_currencyCode,
+          latitude: loc.geoplugin_latitude,
+          longitude: loc.geoplugin_longitude,
+          regionCode: loc.geoplugin_regionCode,
+          regionName: loc.geoplugin_regionName,
+        };
+        reply.send(locationInfo);
+      })
+      .catch((err) => {
+        console.log(`📍 Unable to obtain location info`, err.message);
+        reply.send(locationInfo);
+      });
   });
 
   fastify.get("/gsheet", utilsSchemas.gsheetSchema, async function (
