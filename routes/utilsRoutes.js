@@ -205,7 +205,8 @@ module.exports = function (fastify, opts, next) {
   //var ip = req.connection.remoteAddress
   fastify.get("/ip", utilsSchemas.ipSchema, async function (request, reply) {
     try {
-      reply.send(request.ips);
+      let ips = request.ips;
+      reply.send(ips.length > 1 ? ips[1] : ips[0]);
     } catch (e) {
       reply.send(e.message);
     }
