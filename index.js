@@ -22,7 +22,7 @@ fastify
           description: "A collection of useful utility end-points",
         },
       ],
-      schemes: ["http"],
+      schemes: ["http", "https"],
       addModels: true,
       hideUntagged: true,
       externalDocs: {
