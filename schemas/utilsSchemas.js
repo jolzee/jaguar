@@ -646,6 +646,22 @@ const sendMailSchema = {
   },
 };
 
+const renderTemplateSchema = {
+  schema: {
+    description: "Render a Handlebars tempalte",
+    tags: ["template", "email"],
+    summary: "Render a template",
+    body: {
+      type: "object",
+      required: ["template", "variables"],
+      properties: {
+        template: { type: "string" },
+        variables: { type: "object" },
+      },
+    },
+  },
+};
+
 const sendSesMailSchema = {
   schema: {
     description: "Send emails through AWS SES",
@@ -697,4 +713,5 @@ module.exports = {
   wordsToNumbersSchema,
   translateGoogleSchema,
   ipSchema,
+  renderTemplateSchema,
 };

@@ -2,6 +2,7 @@ const superagent = require("superagent");
 const { createWorker } = require("tesseract.js");
 const nodemailer = require("nodemailer");
 const translate = require("@vitalets/google-translate-api");
+const Handlebars = require("handlebars");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
 // const pollyMp3 = require("../utils/mp3-polly");
 const parseString = require("xml2js").parseString;
@@ -123,6 +124,17 @@ module.exports = function (fastify, opts, next) {
       output: redactedText,
     });
   });
+
+  fastify.post(
+    "/render-template",
+    utilsSchemas.renderTemplateSchema,
+    async (request, reply) => {
+      let rawTemplate = request.body.template;
+      let variables = request.body.variables;
+      let template = Handlebars.compile(rawTemplate);
+      reply.send(template(variables));
+    }
+  );
 
   // fastify.get("/asr/polly", null, async function (request, reply) {
   //   const text =
