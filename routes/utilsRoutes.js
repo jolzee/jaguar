@@ -132,7 +132,9 @@ module.exports = function (fastify, opts, next) {
       let rawTemplate = request.body.template;
       let variables = request.body.variables;
       let template = Handlebars.compile(rawTemplate);
-      reply.send(template(variables));
+      reply.send({
+        result: template(variables),
+      });
     }
   );
 
