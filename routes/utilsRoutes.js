@@ -4,8 +4,8 @@ const nodemailer = require("nodemailer");
 const translate = require("@vitalets/google-translate-api");
 const Handlebars = require("handlebars");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
-// const pollyMp3 = require("../utils/mp3-polly");
 const parseString = require("xml2js").parseString;
+const AWS = require("aws-sdk");
 const { SyncRedactor } = require("redact-pii");
 const redactor = new SyncRedactor({
   customRedactors: {
@@ -17,13 +17,20 @@ const redactor = new SyncRedactor({
     ],
   },
 });
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_SES_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SES_SECRET,
+  region: process.env.AWS_SES_REGION,
+});
+
+const ses = new AWS.SES({ apiVersion: "2010-12-01" });
+
 // const langDetect = require("cld");
 const utilsSchemas = require("../schemas/utilsSchemas");
 
 require("isomorphic-fetch");
 const gsheets = require("gsheets");
-
-var ses = require("node-ses");
 
 module.exports = function (fastify, opts, next) {
   fastify.get(
@@ -137,16 +144,6 @@ module.exports = function (fastify, opts, next) {
       });
     }
   );
-
-  // fastify.get("/asr/polly", null, async function (request, reply) {
-  //   const text =
-  //     request.query.text || "Good day to you. Thanks for trying Polly.";
-  //   const type = request.query.type || "text"; // ssml
-  //   const voice = request.query.voice || "Marlene";
-  //   pollyMp3(text, voice, type, function (audioStream) {
-  //     reply.type("audio/mpeg").send(audioStream);
-  //   });
-  // });
 
   fastify.get(
     "/translate/google",
@@ -303,65 +300,52 @@ module.exports = function (fastify, opts, next) {
   );
 
   fastify.post(
-    "/send-aws-ses-email",
+    "/send-email-ses",
     utilsSchemas.sendSesMailSchema,
     async (request, reply) => {
-      let awsSesClient = null;
+      /* The following example sends a formatted email: */
 
-      if (request.body.awsSesAccessKey && request.body.awsSesSecret) {
-        awsSesClient = ses.createClient({
-          key: request.body.awsSesAccessKey,
-          secret: request.body.awsSesSecret,
-        });
-      } else if (process.env.AWS_SES_ACCESS_KEY && process.env.AWS_SES_SECRET) {
-        awsSesClient = ses.createClient({
-          key: process.env.AWS_SES_ACCESS_KEY,
-          secret: process.env.AWS_SES_SECRET,
-        });
-      }
-
-      if (!awsSesClient) {
-        reply.send({
-          status: "No AWS SES Configuration Found",
-        });
-        return;
-      }
-      // `from` - email address from which to send (required)
-      // `subject` - string (required). Must be encoded as UTF-8
-      // `message` - can be html (required). Must be encoded as UTF-8.
-      // `altText` - plain text version of message. Must be encoded as UTF-8.
-      // `to` - email address or array of addresses
-      // `cc` - email address or array of addresses
-      // `bcc` - email address or array of addresses
-      // `replyTo` - email address
-      // `configurationSet` - SES configuration set name
-      // `messageTags` - SES message tags: array of name/value objects, e.g. { name: xid, value: 1 }
-      const emailConfig = {
-        to: request.body.to,
-        from: request.body.from,
-        cc: request.body.cc ? request.body.cc : [],
-        bcc: request.body.bcc ? request.body.bcc : [],
-        subject: request.body.subject,
-        message: request.body.text,
+      var params = {
+        Destination: {
+          BccAddresses: request.body.bcc || [],
+          CcAddresses: request.body.cc || [],
+          ToAddresses: request.body.to,
+        },
+        Message: {
+          Body: {
+            Text: {
+              Charset: "UTF-8",
+              Data: request.body.text,
+            },
+          },
+          Subject: {
+            Charset: "UTF-8",
+            Data: request.body.subject,
+          },
+        },
+        ReturnPathArn: process.env.AWS_SES_RETURN_ARN,
+        Source: process.env.AWS_SES_FROM_ADDRESS,
+        SourceArn: process.env.AWS_SES_SOURCE_ARN,
       };
 
-      awsSesClient.sendEmail(emailConfig, function (error, data, res) {
-        if (error) {
+      if (request.body.html) {
+        params.Message.Body.Html = {
+          Charset: "UTF-8",
+          Data: request.body.html,
+        };
+      }
+
+      ses.sendEmail(params, function (err, data) {
+        if (err) {
+          console.log(err, err.stack);
           reply.send({ status: "error" });
-        } else {
-          console.log(`Email sent to: ${emailConfig.to}`);
-          parseString(data, function (err, result) {
-            if (err) {
-              reply.send({
-                status: "sent",
-              });
-            } else {
-              console.log("Email sent: " + result);
-              reply.send({
-                status: "sent",
-                sesData: result,
-              });
-            }
+        }
+        // an error occurred
+        else {
+          console.log(data); // successful response
+          reply.send({
+            status: "sent",
+            sesData: data,
           });
         }
       });

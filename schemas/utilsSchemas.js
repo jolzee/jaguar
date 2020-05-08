@@ -669,10 +669,14 @@ const sendSesMailSchema = {
     summary: "Send Email through AWS SES",
     body: {
       type: "object",
-      required: ["from", "to", "subject", "text"],
+      required: ["to", "subject", "text"],
       properties: {
-        from: { type: "string" },
-        to: { type: "string" },
+        to: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
         cc: {
           type: "array",
           items: {
@@ -686,15 +690,8 @@ const sendSesMailSchema = {
           },
         },
         subject: { type: "string" },
+        html: { type: "string" },
         text: { type: "string" },
-        awsSesAccessKey: {
-          type: "string",
-          description: "Optional - If specified overrides env variable config",
-        },
-        awsSesSecret: {
-          type: "string",
-          description: "Optional - If specified overrides env variable config",
-        },
       },
     },
   },
