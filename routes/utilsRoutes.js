@@ -3,6 +3,7 @@ const { createWorker } = require("tesseract.js");
 const nodemailer = require("nodemailer");
 const translate = require("@vitalets/google-translate-api");
 const Handlebars = require("handlebars");
+const Redis = require("ioredis");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
 const parseString = require("xml2js").parseString;
 const AWS = require("aws-sdk");
@@ -17,6 +18,23 @@ const redactor = new SyncRedactor({
     ],
   },
 });
+
+var redis = null;
+try {
+  if (process.env.REDIS_PORT) {
+    redis = new Redis({
+      port: parseInt(process.env.REDIS_PORT), // Redis port
+      host: process.env.REDIS_HOST, // Redis host
+      family: 4, // 4 (IPv4) or 6 (IPv6)
+      password: process.env.REDIS_PASSWORD,
+      db: 0,
+    });
+  } else if (process.env.REDIS_URL) {
+    redis = new Redis(`${process.env.REDIS_URL}`);
+  }
+} catch (e) {
+  console.error("Could not setup Redis connection", e);
+}
 
 AWS.config.update({
   accessKeyId: process.env.AWS_SES_ACCESS_KEY,
@@ -144,6 +162,44 @@ module.exports = function (fastify, opts, next) {
       });
     }
   );
+
+  fastify.post("/redis", async (request, reply) => {
+    let key = request.body.key;
+    let infoToSave = request.body.data;
+    redis.set(`JAGUAR-${key}`, JSON.stringify(infoToSave));
+    reply.send({
+      result: "ok",
+    });
+  });
+
+  fastify.get("/redis", async (request, reply) => {
+    let key = request.query.key;
+    redis
+      .get(`JAGUAR-${key}`)
+      .then((value) => {
+        if (value) {
+          let data = JSON.parse(value);
+          console.log(data);
+          reply.send(data);
+        } else {
+          reply.send({
+            result: "not found",
+          });
+        }
+      })
+      .catch((err) => {
+        reply.send(err);
+      });
+  });
+
+  fastify.delete("/redis", async (request, reply) => {
+    let key = request.query.key;
+    redis.del(`JAGUAR-${key}`);
+
+    reply.send({
+      result: "ok",
+    });
+  });
 
   fastify.get(
     "/translate/google",
