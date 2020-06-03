@@ -150,6 +150,37 @@ module.exports = function (fastify, opts, next) {
     });
   });
 
+  fastify.get("/html-image", async function (request, reply) {
+    const imageUrl = request.query.t;
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jaguar to the Rescue</title>
+<style>
+body {
+	background: url(${imageUrl}) no-repeat top center scroll;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+html {
+    height: 100%
+}
+</style>
+</head>
+<body>
+<div style="height: 1721px">
+<!-- content -->
+</div>
+
+</body>
+</html>`;
+    reply.code(200).type("text/html; charset=UTF-8").send(html);
+  });
+
   fastify.post(
     "/render-template",
     utilsSchemas.renderTemplateSchema,
