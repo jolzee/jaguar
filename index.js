@@ -3,8 +3,57 @@ require("dotenv-defaults").config();
 const Boom = require("boom");
 const oas = require("fastify-oas");
 const fastify = require("fastify")({ trustProxy: true });
+const oauthPlugin = require("fastify-oauth2");
 const port = process.env.PORT || 5000;
 const host = process.env.HOST_NAME || "localhost";
+
+const validStates = new Set();
+
+fastify.register(oauthPlugin, {
+  name: "googleOAuth2",
+  scope: ["profile"],
+  credentials: {
+    client: {
+      id:
+        "1037571012411-kahoeuek9gc89plne97ct030lbbp0i0p.apps.googleusercontent.com",
+    },
+    auth: oauthPlugin.GOOGLE_CONFIGURATION,
+  },
+  // register a fastify url to start the redirect flow
+  startRedirectPath: "/login/google",
+  // facebook redirect here after the user login
+  callbackUri: "http://joles.xyz:5000/login/google/callback",
+  generateStateFunction: (request) => {
+    const state = request.query.id;
+    validStates.add(state);
+    return state;
+  },
+  // custom function to check the state is valid
+  checkStateFunction: (returnedState, callback) => {
+    if (validStates.has(returnedState)) {
+      callback();
+      return;
+    }
+    callback(new Error("Invalid state"));
+  },
+});
+
+fastify.get("/login/google/callback", async function (request, reply) {
+  let state = request.query.state;
+  let token = request.query.code;
+  let scope = request.query.scope;
+
+  // const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(
+  //   request
+  // );
+
+  console.log(state, token, scope);
+
+  // if later you need to refresh the token you can use
+  // const newToken = await this.getNewAccessTokenUsingRefreshToken(token.refresh_token)
+
+  reply.send({ access_token: token });
+});
 
 fastify
   .register(oas, {

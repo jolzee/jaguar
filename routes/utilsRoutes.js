@@ -5,9 +5,10 @@ const translate = require("@vitalets/google-translate-api");
 const Handlebars = require("handlebars");
 const Redis = require("ioredis");
 const { extractAllData, wordsToNumbers } = require("../utils/utils");
-const parseString = require("xml2js").parseString;
-const AWS = require("aws-sdk");
+
 const { SyncRedactor } = require("redact-pii");
+const amazontts = require("../utils/polly");
+
 const redactor = new SyncRedactor({
   customRedactors: {
     before: [
@@ -35,14 +36,6 @@ try {
 } catch (e) {
   console.error("Could not setup Redis connection", e);
 }
-
-AWS.config.update({
-  accessKeyId: process.env.AWS_SES_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SES_SECRET,
-  region: process.env.AWS_SES_REGION,
-});
-
-const ses = new AWS.SES({ apiVersion: "2010-12-01" });
 
 // const langDetect = require("cld");
 const utilsSchemas = require("../schemas/utilsSchemas");
@@ -201,6 +194,39 @@ html {
     reply.send({
       result: "ok",
     });
+  });
+
+  fastify.get("/tts.mp3", async (request, reply) => {
+    let fs = require("fs");
+    var path = require("path");
+    var errorAudioPath = path.join(__dirname, "..", "assets", "echo.mp3");
+
+    try {
+      let text = request.query.text;
+      let voice = request.query.voice || null;
+      let languageCode = request.query.langcode || null;
+      let gender = request.query.gender || "neutral";
+      /**
+       * en-IN, en-US, en-GB-WLS, fr-FR, fr-CA, de-DE, hi-IN, is-IS, it-IT, ja-JP, ko-KR, nb-NO, pl-PL, pt-BR, pt-PT, ro-RO, ru-RU, es-ES, es-MX, es-US, sv-SE, tr-TR, cy-GB
+       */
+      let streamResult = await amazontts(text, {
+        voice: { name: voice, gender: gender, engine: "neural" },
+        language: {
+          code: languageCode,
+        },
+        log: false,
+        config: {
+          accessKeyId: process.env.AWS_POLLY_ACCESS_KEY,
+          secretAccessKey: process.env.AWS_POLLY_SECRET,
+          region: process.env.AWS_POLLY_REGION,
+        },
+      });
+      reply.type("audio/mpeg").send(streamResult);
+    } catch (e) {
+      console.error(e);
+      const stream = fs.createReadStream(errorAudioPath);
+      reply.type("audio/mpeg").send(stream);
+    }
   });
 
   fastify.get("/redis", async (request, reply) => {
@@ -390,6 +416,7 @@ html {
     "/send-email-ses",
     utilsSchemas.sendSesMailSchema,
     async (request, reply) => {
+      const ses = require("../utils/ses");
       /* The following example sends a formatted email: */
 
       var params = {
