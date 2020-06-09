@@ -330,6 +330,7 @@ html {
   //var ip = req.connection.remoteAddress
   fastify.get("/ip", utilsSchemas.ipSchema, async function (request, reply) {
     try {
+      console.log("Raw IP:", request.raw.ip);
       console.log("Request IP: ", request.ip);
       console.log("Request IPs: ", request.ips);
       let ips = request.ips;
