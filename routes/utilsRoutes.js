@@ -333,8 +333,9 @@ html {
       console.log("Raw IP:", request.raw.ip);
       console.log("Request IP: ", request.ip);
       console.log("Request IPs: ", request.ips);
-      let ips = request.ips;
-      reply.send(ips.length > 1 ? ips[1] : ips[0]);
+      // let ips = request.ips;
+      // reply.send(ips.length > 1 ? ips[1] : ips[0]);
+      reply.send(request.raw.ip);
     } catch (e) {
       reply.send(e.message);
     }
