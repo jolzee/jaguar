@@ -1,6 +1,5 @@
 require("dotenv-defaults").config();
 
-const Boom = require("boom");
 const oas = require("fastify-oas");
 const fastify = require("fastify")({ trustProxy: true });
 const oauthPlugin = require("fastify-oauth2");
@@ -55,36 +54,40 @@ fastify.get("/login/google/callback", async function (request, reply) {
   reply.send({ access_token: token });
 });
 
-fastify
-  .register(oas, {
-    routePrefix: "/documentation",
-    swagger: {
-      info: {
-        title: "Jaguar API Server",
-        description: "Provides a Set of Useful APIs",
-        version: "0.1.0",
-      },
-      host: host.startsWith("localhost") ? `localhost:${port}` : host,
-      tags: [
-        {
-          name: "utils",
-          description: "A collection of useful utility end-points",
-        },
-      ],
-      schemes: ["http", "https"],
-      addModels: true,
-      hideUntagged: true,
-      externalDocs: {
-        url: "https://swagger.io",
-        description: "Find more info here",
-      },
-      consumes: ["application/json"],
-      produces: ["application/json"],
+const swaggerConf = {
+  routePrefix: "/documentation",
+  swagger: {
+    info: {
+      title: "Jaguar API Server",
+      description: "Provides a Set of Useful APIs",
+      version: "0.1.0",
     },
-    exposeRoute: true,
-  })
+    host: host.startsWith("localhost") ? `localhost:${port}` : host,
+    tags: [
+      {
+        name: "utils",
+        description: "A collection of useful utility end-points",
+      },
+    ],
+    schemes: ["http", "https"],
+    addModels: true,
+    hideUntagged: true,
+    externalDocs: {
+      url: "https://swagger.io",
+      description: "Find more info here",
+    },
+    consumes: ["application/json"],
+    produces: ["application/json"],
+  },
+  exposeRoute: true,
+};
+
+fastify
+  .register(oas, swaggerConf)
   .register(require("fastify-cors"), {
-    RegExp: ["*"],
+    Array: process.env.CORS_ALLOWED_ORIGINS.split(",").map(function (origin) {
+      return origin.trim();
+    }),
     methods: ["GET", "POST"],
   })
   .register(require("fastify-helmet"))
