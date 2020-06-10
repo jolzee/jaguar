@@ -42,7 +42,7 @@ const OPTIONS_BASE = {
   },
   block: {
     separator: E["TTS_BLOCK_SEPARATOR"] || ".",
-    length: parseFloat(E["TTS_BLOCK_LENGTH"] || "2000"),
+    length: parseFloat(E["TTS_BLOCK_LENGTH"] || "1500"),
   },
   config: null,
 };
