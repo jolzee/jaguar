@@ -14,9 +14,11 @@
     "@vitalets/google-translate-api": "^3.0.0",
     "aws-sdk": "^2.681.0",
     "bcryptjs": "^2.4.3",
+    "boolean": "^3.0.1",
     "cld": "^2.7.0",
     "date.js": "^0.3.3",
     "dotenv-defaults": "^1.1.1",
+    "extra-awsconfig": "^1.3.4",
     "fastify": "2.14.1",
     "fastify-auth": "^0.7.2",
     "fastify-boom": "^0.1.0",
@@ -31,18 +33,17 @@
     "ioredis": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "languagedetect": "^2.0.0",
+    "lodash": "^4.17.15",
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.4",
     "redact-pii": "^3.2.3",
+    "replaceall": "^0.1.6",
     "sentiment": "^5.0.2",
     "superagent": "^5.2.2",
     "tesseract.js": "^2.1.1",
     "tinyurl": "^1.1.5",
     "twilio": "^3.43.1",
     "words-to-numbers": "^1.5.1",
-    "xml2js": "^0.4.23",
-    "boolean": "^3.0.1",
-    "extra-awsconfig": "^1.3.4",
-    "lodash": "^4.17.15"
+    "xml2js": "^0.4.23"
   }
 }

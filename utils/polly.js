@@ -2,6 +2,7 @@ const awsconfig = require("extra-awsconfig");
 const AWS = require("aws-sdk");
 const { boolean } = require("boolean");
 const _ = require("lodash");
+var replaceall = require("replaceall");
 
 // Global variables
 const E = process.env;
@@ -12,39 +13,39 @@ const OPTIONS_BASE = {
   acodec: E["TTS_ACODEC"] || "copy",
   audio: {
     encoding: E["TTS_AUDIO_ENCODING"] || null,
-    frequency: parseInt(E["TTS_AUDIO_FREQUENCY"] || "0", 10),
+    frequency: parseInt(E["TTS_AUDIO_FREQUENCY"] || "0", 10)
   },
   language: {
     code: E["TTS_LANGUAGE_CODE"] || null,
-    lexicons: (E["TTS_LANGUAGE_LEXICONS"] || "").split(",").filter((v) => !!v),
+    lexicons: (E["TTS_LANGUAGE_LEXICONS"] || "").split(",").filter(v => !!v)
   },
   voice: {
     name: E["TTS_VOICE_NAME"] || null,
-    gender: E["TTS_VOICE_GENDER"] || "neutral",
+    gender: E["TTS_VOICE_GENDER"] || "neutral"
   },
   quote: {
     break: parseFloat(E["TTS_QUOTE_BREAK"] || "250"),
-    emphasis: E["TTS_QUOTE_EMPHASIS"] || "moderate",
+    emphasis: E["TTS_QUOTE_EMPHASIS"] || "moderate"
   },
   heading: {
     break: parseFloat(E["TTS_HEADING_BREAK"] || "4000"),
     difference: parseFloat(E["TTS_HEADING_DIFFERENCE"] || "250"),
-    emphasis: E["TTS_HEADING_EMPHASIS"] || "strong",
+    emphasis: E["TTS_HEADING_EMPHASIS"] || "strong"
   },
   ellipsis: {
-    break: parseFloat(E["TTS_ELLIPSIS_BREAK"] || "1500"),
+    break: parseFloat(E["TTS_ELLIPSIS_BREAK"] || "1500")
   },
   dash: {
-    break: parseFloat(E["TTS_DASH_BREAK"] || "500"),
+    break: parseFloat(E["TTS_DASH_BREAK"] || "500")
   },
   newline: {
-    break: parseFloat(E["TTS_NEWLINE_BREAK"] || "1000"),
+    break: parseFloat(E["TTS_NEWLINE_BREAK"] || "1000")
   },
   block: {
     separator: E["TTS_BLOCK_SEPARATOR"] || ".",
-    length: parseFloat(E["TTS_BLOCK_LENGTH"] || "1500"),
+    length: parseFloat(E["TTS_BLOCK_LENGTH"] || "1500")
   },
-  config: null,
+  config: null
 };
 const VOICE = new Map([
   ["cmn-CN", { f: "Zhiyu", m: null }],
@@ -74,7 +75,7 @@ const VOICE = new Map([
   ["es-US", { f: "Penelope", m: "Miguel" }],
   ["sv-SE", { f: "Astrid", m: null }],
   ["tr-TR", { f: "Filiz", m: null }],
-  ["cy-GB", { f: "Gwyneth", m: null }],
+  ["cy-GB", { f: "Gwyneth", m: null }]
 ]);
 
 // Get Polly synthesize speech params.
@@ -98,7 +99,7 @@ function pollyParams(options) {
     Text: null,
     TextType: "ssml",
     VoiceId: vn,
-    LanguageCode: options.language.code,
+    LanguageCode: options.language.code
   };
 }
 
@@ -163,6 +164,9 @@ function getTtsStream(ssml, tts, options) {
  * @returns promise <out>.
  */
 async function amazontts(txt, options) {
+  txt = replaceall("?", ".", txt);
+  txt = replaceall("...", ".", txt);
+  txt = replaceall("..", ".", txt);
   var options = _.merge({}, OPTIONS_BASE, options);
   // if (options.log) console.log("@amazontts:", `Outputting Audio Stream`, txt);
   options.params = options.params || pollyParams(options);
