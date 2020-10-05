@@ -1,7 +1,10 @@
 require("dotenv-defaults").config();
 
 const oas = require("fastify-oas");
-const fastify = require("fastify")({ trustProxy: true });
+const fastify = require("fastify")({
+  http2: false,
+  trustProxy: true,
+});
 const oauthPlugin = require("fastify-oauth2");
 const port = process.env.PORT || 5000;
 const host = process.env.HOST_NAME || "localhost";
