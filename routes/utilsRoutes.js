@@ -207,6 +207,7 @@ html {
       let voice = request.query.voice || null;
       let languageCode = request.query.langcode || null;
       let gender = request.query.gender || "neutral";
+      console.log("TTS start");
       /**
        * en-IN, en-US, en-GB-WLS, fr-FR, fr-CA, de-DE, hi-IN, is-IS, it-IT, ja-JP, ko-KR, nb-NO, pl-PL, pt-BR, pt-PT, ro-RO, ru-RU, es-ES, es-MX, es-US, sv-SE, tr-TR, cy-GB
        */
@@ -222,6 +223,7 @@ html {
           region: process.env.AWS_POLLY_REGION,
         },
       });
+      console.log("TTS end");
       reply.type("audio/mpeg").send(streamResult);
     } catch (e) {
       console.error(e);
