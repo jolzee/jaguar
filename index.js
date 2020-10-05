@@ -2,7 +2,7 @@ require("dotenv-defaults").config();
 
 const oas = require("fastify-oas");
 const fastify = require("fastify")({
-  http2: true,
+  http2: false,
   trustProxy: true,
 });
 const oauthPlugin = require("fastify-oauth2");
