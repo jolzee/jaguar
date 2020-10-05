@@ -168,6 +168,7 @@ async function amazontts(txt, options) {
   txt = replaceall("!", ".", txt);
   txt = replaceall("...", ".", txt);
   txt = replaceall("..", ".", txt);
+  // test
   var options = _.merge({}, OPTIONS_BASE, options);
   // if (options.log) console.log("@amazontts:", `Outputting Audio Stream`, txt);
   options.params = options.params || pollyParams(options);
